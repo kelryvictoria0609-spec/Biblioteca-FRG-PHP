@@ -1,0 +1,14 @@
+# Configuração local com senhas (nunca vai para o repositório)
+servidor/config.local.php
+.env
+
+# Bancos de teste e logs
+*.sqlite3
+*.sqlite3-*
+*.log
+
+# Editores e sistema
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

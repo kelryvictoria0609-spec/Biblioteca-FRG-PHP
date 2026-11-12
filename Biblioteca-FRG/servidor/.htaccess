@@ -1,0 +1,2 @@
+# Os arquivos do servidor nunca são acessados pelo navegador
+Require all denied

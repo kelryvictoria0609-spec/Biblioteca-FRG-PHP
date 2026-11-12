@@ -1,0 +1,38 @@
+# ===== Biblioteca SME-FRG — configuração para servidor Apache =====
+# O site precisa ficar na RAIZ do endereço (ex.: https://biblioteca.exemplo.gov.br/), pois as telas usam /api/...
+DirectoryIndex index.php
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # css, js e img: o Apache entrega direto (se o arquivo existir)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^(css|js|img)/ - [L]
+    # Todo o resto passa pelo index.php (inclusive as páginas .html, o painel e a API).
+    # Assim ninguém acessa direto admin.html, a pasta servidor/, o README etc.
+    RewriteCond %{REQUEST_URI} !^/index\.php$
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+# Proteção extra: arquivos que nunca devem ser entregues
+<FilesMatch "(^\.|\.(md|log|sql|ini|sh|bak)$|^criar_admin\.php$)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "same-origin"
+</IfModule>
+
+# Estilos, scripts e imagens ficam 1 dia no navegador (as páginas usam ?v=N para forçar a troca)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 day"
+    ExpiresByType text/javascript "access plus 1 day"
+    ExpiresByType application/javascript "access plus 1 day"
+    ExpiresByType image/png "access plus 1 day"
+    ExpiresByType image/x-icon "access plus 1 day"
+</IfModule>
+
+# Limite de tamanho dos pedidos (ninguém envia arquivos ao servidor)
+LimitRequestBody 1048576
